@@ -82,7 +82,7 @@ class AuthScreen extends StatelessWidget {
                           // Loading indicator
                           Obx(() {
                             if (_authController.isLoading.value) {
-                              return const CircularProgressIndicator();
+                              return const CircularProgressIndicator.adaptive();
                             } else {
                               return ElevatedButton(
                                 onPressed: _trySubmit,
