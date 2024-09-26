@@ -37,7 +37,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
           ),
         ],
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

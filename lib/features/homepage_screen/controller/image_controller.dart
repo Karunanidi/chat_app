@@ -11,6 +11,7 @@ import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 class ImagePickerController extends GetxController {
   var selectedImage = Rxn<File>();
   var isUploading = false.obs;
+  var uploadedImageUrl = ''.obs;
   var uploadSuccessMessage = ''.obs;
   var currentUser = FirebaseAuth.instance.currentUser.obs;
   final ImagePicker _picker = ImagePicker();
@@ -67,6 +68,9 @@ class ImagePickerController extends GetxController {
     try {
       isUploading.value = true;
       uploadSuccessMessage.value = '';
+      var name = currentUser.value!.displayName;
+      var email = currentUser.value!.email;
+      var user = currentUser.value!.displayName != null ? name : email;
 
       // Compress the image before uploading
       final compressedImage = await compressImage(selectedImage.value!);
@@ -79,12 +83,8 @@ class ImagePickerController extends GetxController {
       final fileName = basename(compressedImage.path);
 
       // Create a reference to Firebase Storage using the user's UID as part of the path
-
-      Reference storageRef = _storage
-          .ref()
-          .child('user_uploads/')
-          .child('images/')
-          .child('${currentUser.value!.uid}/$fileName');
+      Reference storageRef = _storage.ref().child(
+          'user_uploads/images/profile/${currentUser.value!.uid}$user/$fileName');
 
       log('filepath: $storageRef', name: 'storage');
       log('filename: $fileName', name: 'storage');
@@ -102,10 +102,8 @@ class ImagePickerController extends GetxController {
 
       // Get the download URL after the upload
       String downloadUrl = await storageRef.getDownloadURL();
-      uploadSuccessMessage.value = 'Upload successful: $downloadUrl';
-
-      // Clear the selected image after upload
-      selectedImage.value = null;
+      uploadedImageUrl.value = downloadUrl;
+      log('imageUrl: $downloadUrl');
     } catch (e) {
       uploadSuccessMessage.value = 'Error during upload: $e';
     } finally {

@@ -19,13 +19,13 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Display the selected image
+        // Display the uploaded image from Firebase Storage
         Obx(() {
-          if (_imagePickerController.selectedImage.value != null) {
+          var imageUrl = _imagePickerController.uploadedImageUrl.value;
+          if (imageUrl.isNotEmpty) {
             return CircleAvatar(
               radius: 40,
-              backgroundImage:
-                  FileImage(_imagePickerController.selectedImage.value!),
+              backgroundImage: NetworkImage(imageUrl),
             );
           } else {
             return const CircleAvatar(
@@ -38,51 +38,53 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
         // Button to pick an image from the gallery
         TextButton.icon(
           onPressed: () {
-            _imagePickerController.pickImage(ImageSource.camera);
+            _imagePickerController.pickImage(ImageSource.gallery).then(
+                  (_) => _imagePickerController.uploadImageToFirebaseStorage(),
+                );
           },
           icon: const Icon(Icons.image),
           label: const Text('Add Image'),
         ),
         // Button to upload the selected image (with compression)
-        Obx(() {
-          if (_imagePickerController.isUploading.value) {
-            return const Column(
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 10),
-                Text('Uploading...'),
-              ],
-            );
-          } else {
-            return ElevatedButton(
-              onPressed: _imagePickerController.uploadImageToFirebaseStorage,
-              child: const Text('Upload Image'),
-            );
-          }
-        }),
-        const SizedBox(height: 10),
+        // Obx(() {
+        //   if (_imagePickerController.isUploading.value) {
+        //     return const Column(
+        //       children: [
+        //         CircularProgressIndicator(),
+        //         SizedBox(height: 10),
+        //         Text('Uploading...'),
+        //       ],
+        //     );
+        //   } else {
+        //     return ElevatedButton(
+        //       onPressed: _imagePickerController.uploadImageToFirebaseStorage,
+        //       child: const Text('Upload Image'),
+        //     );
+        //   }
+        // }),
+        // const SizedBox(height: 10),
         // Optional: Button to clear the selected image
-        TextButton.icon(
-          onPressed: _imagePickerController.clearImage,
-          icon: const Icon(Icons.clear),
-          label: const Text('Clear Image'),
-        ),
-        const SizedBox(height: 10),
+        // TextButton.icon(
+        //   onPressed: _imagePickerController.clearImage,
+        //   icon: const Icon(Icons.clear),
+        //   label: const Text('Clear Image'),
+        // ),
+        // const SizedBox(height: 10),
         // Show success or error messages
-        Obx(() {
-          if (_imagePickerController.uploadSuccessMessage.value.isNotEmpty) {
-            return Text(
-              _imagePickerController.uploadSuccessMessage.value,
-              style: TextStyle(
-                color: _imagePickerController.uploadSuccessMessage.value
-                        .contains('successful')
-                    ? Colors.green
-                    : Colors.red,
-              ),
-            );
-          }
-          return const SizedBox();
-        }),
+        // Obx(() {
+        //   if (_imagePickerController.uploadSuccessMessage.value.isNotEmpty) {
+        //     return Text(
+        //       _imagePickerController.uploadSuccessMessage.value,
+        //       style: TextStyle(
+        //         color: _imagePickerController.uploadSuccessMessage.value
+        //                 .contains('successful')
+        //             ? Colors.green
+        //             : Colors.red,
+        //       ),
+        //     );
+        //   }
+        //   return const SizedBox();
+        // }),
       ],
     );
   }
