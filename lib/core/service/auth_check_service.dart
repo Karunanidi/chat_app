@@ -2,7 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/features/auth_screen/auth_screen.dart';
 import 'package:flutter_chat/features/auth_screen/controller/auth_controller.dart';
-import 'package:flutter_chat/features/homepage_screen/homepage_screen.dart';
+import 'package:flutter_chat/features/chat_screen.dart/chat.dart';
+import 'package:flutter_chat/features/chat_screen.dart/chat_messages.dart.dart';
+import 'package:flutter_chat/features/profile_screen/profile_screen.dart';
 import 'package:get/get.dart';
 
 class AuthCheckScreen extends StatelessWidget {
@@ -44,7 +46,7 @@ class AuthCheckScreen extends StatelessWidget {
           // If not loading or error, redirect based on user auth status
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (_authController.isAuthenticated.value) {
-              Get.offAll(() => const HomePageScreen());
+              Get.offAll(() => const ProfileScreen());
             } else {
               Get.offAll(() => AuthScreen());
             }

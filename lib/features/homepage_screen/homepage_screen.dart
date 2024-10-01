@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat/core/component/image_picker.dart';
 import 'package:flutter_chat/features/auth_screen/controller/auth_controller.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
-class HomePageScreen extends StatefulWidget {
-  const HomePageScreen({super.key});
+class HomepageScreen extends StatefulWidget {
+  const HomepageScreen({super.key});
 
   @override
-  State<HomePageScreen> createState() => _HomePageScreenState();
+  State<HomepageScreen> createState() => _HomepageScreenState();
 }
 
-class _HomePageScreenState extends State<HomePageScreen> {
+class _HomepageScreenState extends State<HomepageScreen> {
   final AuthController _auth = Get.put(AuthController());
 
   @override
@@ -41,7 +40,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ImagePickerWidget()
+            Text('Logged In!'),
           ],
         ),
       ),

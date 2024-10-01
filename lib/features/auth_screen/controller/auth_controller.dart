@@ -1,8 +1,7 @@
 import 'dart:developer';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_chat/features/auth_screen/auth_screen.dart';
-import 'package:flutter_chat/features/homepage_screen/homepage_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';import 'package:flutter_chat/features/auth_screen/auth_screen.dart';
+import 'package:flutter_chat/features/profile_screen/profile_screen.dart';
 import 'package:get/get.dart';
 
 class AuthController extends GetxController {
@@ -58,7 +57,7 @@ class AuthController extends GetxController {
       // On successful login, go to the homepage
       log('userCredentials: $credentials');
       isAuthenticated.value = true;
-      Get.offAll(() => const HomePageScreen());
+      Get.offAll(() => const ProfileScreen());
     } on FirebaseAuthException catch (e) {
       errorMessage.value = e.message ?? 'Authentication failed';
     } finally {
@@ -77,7 +76,7 @@ class AuthController extends GetxController {
 
       // On successful sign up, go to the homepage
       isAuthenticated.value = true;
-      Get.offAll(() => const HomePageScreen());
+      Get.offAll(() => const ProfileScreen());
     } on FirebaseAuthException catch (e) {
       errorMessage.value = e.message ?? 'Sign-up failed';
     } finally {

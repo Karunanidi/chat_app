@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat/features/homepage_screen/controller/image_controller.dart';
+import 'package:flutter_chat/features/profile_screen/controller/profile_controller.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -11,80 +11,38 @@ class ImagePickerWidget extends StatefulWidget {
 }
 
 class _ImagePickerWidgetState extends State<ImagePickerWidget> {
-  final ImagePickerController _imagePickerController =
-      Get.put(ImagePickerController());
+  final ProfileController _imagePickerController = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Display the uploaded image from Firebase Storage
+        // Show selected images
         Obx(() {
-          var imageUrl = _imagePickerController.uploadedImageUrl.value;
-          if (imageUrl.isNotEmpty) {
+          var imageFile = _imagePickerController.selectedImage.value;
+          if (imageFile != null) {
             return CircleAvatar(
               radius: 40,
-              backgroundImage: NetworkImage(imageUrl),
+              backgroundImage: FileImage(imageFile),
             );
           } else {
             return const CircleAvatar(
               radius: 40,
               backgroundColor: Colors.grey,
+              child: Icon(Icons.person, size: 40, color: Colors.white),
             );
           }
         }),
         const SizedBox(height: 10),
-        // Button to pick an image from the gallery
+        // Button to select images
         TextButton.icon(
           onPressed: () {
-            _imagePickerController.pickImage(ImageSource.gallery).then(
-                  (_) => _imagePickerController.uploadImageToFirebaseStorage(),
-                );
+            _imagePickerController.pickImage(ImageSource.camera);
           },
           icon: const Icon(Icons.image),
-          label: const Text('Add Image'),
+          label: const Text('Add Images'),
         ),
-        // Button to upload the selected image (with compression)
-        // Obx(() {
-        //   if (_imagePickerController.isUploading.value) {
-        //     return const Column(
-        //       children: [
-        //         CircularProgressIndicator(),
-        //         SizedBox(height: 10),
-        //         Text('Uploading...'),
-        //       ],
-        //     );
-        //   } else {
-        //     return ElevatedButton(
-        //       onPressed: _imagePickerController.uploadImageToFirebaseStorage,
-        //       child: const Text('Upload Image'),
-        //     );
-        //   }
-        // }),
-        // const SizedBox(height: 10),
-        // Optional: Button to clear the selected image
-        // TextButton.icon(
-        //   onPressed: _imagePickerController.clearImage,
-        //   icon: const Icon(Icons.clear),
-        //   label: const Text('Clear Image'),
-        // ),
-        // const SizedBox(height: 10),
-        // Show success or error messages
-        // Obx(() {
-        //   if (_imagePickerController.uploadSuccessMessage.value.isNotEmpty) {
-        //     return Text(
-        //       _imagePickerController.uploadSuccessMessage.value,
-        //       style: TextStyle(
-        //         color: _imagePickerController.uploadSuccessMessage.value
-        //                 .contains('successful')
-        //             ? Colors.green
-        //             : Colors.red,
-        //       ),
-        //     );
-        //   }
-        //   return const SizedBox();
-        // }),
       ],
     );
   }

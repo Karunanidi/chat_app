@@ -1,6 +1,7 @@
 // File path: controllers/image_picker_controller.dart
 import 'dart:developer';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -8,11 +9,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:path/path.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 
-class ImagePickerController extends GetxController {
+class ProfileController extends GetxController {
   var selectedImage = Rxn<File>();
   var isUploading = false.obs;
   var uploadedImageUrl = ''.obs;
   var uploadSuccessMessage = ''.obs;
+  var username = ''.obs;
   var currentUser = FirebaseAuth.instance.currentUser.obs;
   final ImagePicker _picker = ImagePicker();
   final FirebaseStorage _storage = FirebaseStorage.instance;
@@ -68,9 +70,8 @@ class ImagePickerController extends GetxController {
     try {
       isUploading.value = true;
       uploadSuccessMessage.value = '';
-      var name = currentUser.value!.displayName;
       var email = currentUser.value!.email;
-      var user = currentUser.value!.displayName != null ? name : email;
+      var user = username.value;
 
       // Compress the image before uploading
       final compressedImage = await compressImage(selectedImage.value!);
@@ -88,6 +89,7 @@ class ImagePickerController extends GetxController {
 
       log('filepath: $storageRef', name: 'storage');
       log('filename: $fileName', name: 'storage');
+      log('username: $user', name: 'firestore');
 
       // Start the upload task
       UploadTask uploadTask = storageRef.putFile(compressedImage);
@@ -104,6 +106,16 @@ class ImagePickerController extends GetxController {
       String downloadUrl = await storageRef.getDownloadURL();
       uploadedImageUrl.value = downloadUrl;
       log('imageUrl: $downloadUrl');
+
+      // initiate firestore collection
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.value!.uid)
+          .set({
+        'username': user,
+        'email': email,
+        'image_url': downloadUrl,
+      });
     } catch (e) {
       uploadSuccessMessage.value = 'Error during upload: $e';
     } finally {
